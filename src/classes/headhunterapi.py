@@ -7,18 +7,30 @@ from src.classes.parser import Parser
 
 class HeadHunterAPI(Parser):
     """
-    Класс для работы с API HeadHunter
-    Класс Parser является родительским классом, который вам необходимо реализовать
-    """
-    __API_URL = 'https://api.hh.ru/vacancies'
+    Класс HeadHunterAPI, обеспечивает связь с HH Api и получение списка вакансий с указанием ключевого слова.
 
-    def __init__(self):
-        self.__headers = {'User-Agent': 'HH-User-Agent'}
-        self.__params = {'text': '', 'page': 0, 'per_page': 10}
+    Attributes:
+        __API_URL: Базовый URL подключения к API
+    """
+
+    __API_URL = "https://api.hh.ru/vacancies"
+    __slots__ = ("__headers", "__params", "__vacancies")
+
+    def __init__(self) -> None:
+        """
+        Создаёт объект HeadHunterAPI.
+        """
+        self.__headers = {"User-Agent": "HH-User-Agent"}
+        self.__params = {"text": "", "page": 0, "per_page": 10}
         self.__vacancies = []
 
+    def get_vacancies_by_api(self) -> list[dict]:
+        """
+        Получает список вакансий через подключение к HH Api.
 
-    def get_vacancies_by_api(self):
+        Returns:
+            Список вакансий
+        """
         try:
             response = requests.get(self.__API_URL, headers=self.__headers, params=self.__params)
 
@@ -27,7 +39,7 @@ class HeadHunterAPI(Parser):
                 print(f"Ошибка API: статус {response.status_code}")
                 return []
             else:
-                vacancies = response.json()['items']
+                vacancies = response.json()["items"]
                 return vacancies
 
         except requests.exceptions.RequestException as e:
@@ -37,12 +49,19 @@ class HeadHunterAPI(Parser):
             print(f"Ошибка обработки ответа API: {e}")
             return []
 
+    def get_vacancies(self, keyword) -> list[dict]:
+        """
+        Получение вакансий по заданному ключевому слову keyword.
 
-    def get_vacancies(self, keyword):
-        self.__params['text'] = keyword
-        while self.__params.get('page') != 1:
+        Args:
+            keyword: Ключевое слово, по которому будет проводиться поиск вакансий.
+        Returns:
+            Список вакансий, содержащих ключевое слово.
+        """
+        self.__params["text"] = keyword
+        while self.__params.get("page") != 1:
             vacancies = self.get_vacancies_by_api()
             self.__vacancies.extend(vacancies)
-            self.__params['page'] += 1
+            self.__params["page"] += 1
 
         return self.__vacancies

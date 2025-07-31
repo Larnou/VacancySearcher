@@ -1,3 +1,2 @@
-
-class Vacancy():
+class Vacancy:
     pass

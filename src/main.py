@@ -12,18 +12,21 @@ for i, vacancy in enumerate(hh_vacancies, 1):
     print(f"Компания: {vacancy['employer']['name']}")
     print(f"Ссылка: {vacancy['alternate_url']}\n")
 
-print('\n\n\n')
+print("\n\n\n")
 
 # Преобразование набора данных из JSON в список объектов
 vacancies_list = Vacancy.cast_to_object_list(hh_vacancies)
 
 # Пример работы контструктора класса с одной вакансией
-vacancy = Vacancy("Python Developer", "<https://hh.ru/vacancy/123456>", "100 000-150 000 руб.", "Требования: опыт работы от 3 лет...")
+vacancy = Vacancy(
+    "Python Developer", "<https://hh.ru/vacancy/123456>", "100 000-150 000 руб.", "Требования: опыт работы от 3 лет..."
+)
 
 # Сохранение информации о вакансиях в файл
 json_saver = JSONSaver()
 json_saver.add_vacancy(vacancy)
 json_saver.delete_vacancy(vacancy)
+
 
 # Функция для взаимодействия с пользователем
 def user_interaction():
@@ -31,7 +34,7 @@ def user_interaction():
     search_query = input("Введите поисковый запрос: ")
     top_n = int(input("Введите количество вакансий для вывода в топ N: "))
     filter_words = input("Введите ключевые слова для фильтрации вакансий: ").split()
-    salary_range = input("Введите диапазон зарплат: ") # Пример: 100000 - 150000
+    salary_range = input("Введите диапазон зарплат: ")  # Пример: 100000 - 150000
 
     filtered_vacancies = filter_vacancies(vacancies_list, filter_words)
 
