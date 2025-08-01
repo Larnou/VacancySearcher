@@ -1,3 +1,7 @@
+from typing import Any
+
+from src.classes.RatesAPI import RatesAPI
+
 
 # Создать класс для работы с вакансиями. В этом классе самостоятельно определить атрибуты,
 # такие как название вакансии, ссылка на вакансию, зарплата, краткое описание или требования и т. п.
@@ -10,7 +14,8 @@ class Vacancy:
     Обеспечивает возможность сравнения вакансий по средней зарабной плате.
     """
 
-    __slots__ = ("name", "salary", "has_test", "experience", "requirement", "employer", "alternate_url", "avg_salary")
+    __slots__ = ("name", "salary", "has_test", "experience", "requirement",
+                 "employer", "alternate_url", "avg_salary", "rates_dict")
 
     def __init__(self,
                  name: str,
@@ -19,7 +24,8 @@ class Vacancy:
                  requirement: str,
                  experience: str,
                  has_test: bool,
-                 alternate_url: str
+                 alternate_url: str,
+                 rates_dict: dict
                  ) -> None:
         """
         Создаёт объект Vacancy.
@@ -36,13 +42,36 @@ class Vacancy:
             raise ValueError("Некорректный URL вакансии")
 
         self.name = name
-        self.salary = salary
+        self.salary = self.set_salary(salary, rates_dict)
         self.avg_salary = self.calculate_avg_salary()
         self.requirement = self.remove_from_requirement(requirement)
         self.has_test = has_test
         self.experience = experience
         self.employer = employer
         self.alternate_url = alternate_url
+
+
+    @staticmethod
+    def set_salary(salary: dict | None, rates_dict: dict):
+
+        if isinstance(salary, dict):
+            salary_from = salary.get('from') or 0
+            salary_to = salary.get('to') or 0
+            currency = salary.get('currency') if salary.get('currency') != 'RUR' else 'RUB'
+
+            if currency != 'RUB':
+                rates = RatesAPI().get_currency_rate(currency, rates_dict)
+                salary_from *= rates
+                salary_to *= rates
+
+            currency_salary = {'from': round(salary_from), 'to': round(salary_to), 'currency': 'RUB'}
+            return currency_salary
+
+        else:
+            currency_salary = {'from': 0, 'to': 0, 'currency': 'RUB'}
+
+        return currency_salary
+
 
     @staticmethod
     def remove_from_requirement(requirement: str) -> str:
@@ -58,18 +87,22 @@ class Vacancy:
         new_requirement = new_requirement.replace("</highlighttext>", "")
         return new_requirement
 
-    def calculate_avg_salary(self) -> float:
-        """Рассчитывает среднюю зарплату для сравнений"""
-        salary_from = self.salary.get('from', 0) or 0
-        salary_to = self.salary.get('to', 0) or 0
 
-        # Если указаны обе границы
-        if salary_from and salary_to:
+    def calculate_avg_salary(self) -> float | None | Any:
+        """Рассчитывает среднюю зарплату для сравнений"""
+
+        salary_from = self.salary.get('from')
+        salary_to = self.salary.get('to')
+
+        if salary_from != 0 and salary_to != 0:
             return (salary_from + salary_to) / 2
 
-        # Если указана только одна граница
-        return salary_from or salary_to or 0
+        if salary_from == 0:
+            return salary_to
 
+        if salary_to == 0:
+            return salary_from
+        return None
 
     def get_salary_info(self) -> str:
         """
@@ -79,22 +112,24 @@ class Vacancy:
                 Форматированная информация о зарплате.
         """
 
-        if not self.salary:
+        salary_from = self.salary.get('from')
+        salary_to = self.salary.get('to')
+
+        if salary_from + salary_to == 0:
             return "Не указана"
 
-        salary_from = self.salary.get('from', '')
-        salary_to = self.salary.get('to', '')
-        currency = self.salary.get('currency', '')
+        currency = self.salary.get('currency')
 
         # Обработка различных вариантов
-        if salary_from and salary_to and salary_from != salary_to:
+        if salary_from != 0 and salary_to != 0 and salary_from != salary_to:
             return f"{salary_from} - {salary_to} {currency}"
-        if salary_from:
-            return f"от {salary_from} {currency}"
-        if salary_to:
-            return f"до {salary_to} {currency}"
-        return "Не указана"
 
+        if salary_from == 0:
+            return f"до {salary_to} {currency}"
+
+        if salary_to == 0:
+            return f"от {salary_from} {currency}"
+        return "Не указана"
 
     def __str__(self) -> str:
         """
@@ -122,11 +157,9 @@ class Vacancy:
     # Если зп в разных валютах, надо перевести к рублям и сравнить
     def __eq__(self, other) -> bool:
         if not isinstance(other, Vacancy):
-            return False
+            raise TypeError("Можно сравнивать только объекты Vacancy")
         return self.avg_salary == other.avg_salary
 
-    def __ne__(self, other) -> bool:
-        return not self.__eq__(other)
 
     def __lt__(self, other) -> bool:
         if not isinstance(other, Vacancy):

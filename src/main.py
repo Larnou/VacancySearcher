@@ -1,12 +1,21 @@
+import requests
+from cbrf.asyncio import DailyCurrenciesRates
+
+from src.classes.RatesAPI import RatesAPI
 from src.classes.headhunterapi import HeadHunterAPI
 from src.classes.vacancy import Vacancy
 
+
+
 # Та самая точка входа в работу программы
-# Создание экземпляра класса для работы с API сайтов с вакансиями
+# Создание экземпляра класса для работы с API сайтов с вакансиями и курса валют
 hh_api = HeadHunterAPI()
+rates_api = RatesAPI()
 
 # Получение вакансий с hh.ru в формате JSON
 hh_vacancies = hh_api.get_vacancies("Python")
+rates_dict = rates_api.get_rates_by_api()
+
 for i, vacancy in enumerate(hh_vacancies, 1):
     vacancy = Vacancy(
         vacancy['name'],
@@ -15,7 +24,11 @@ for i, vacancy in enumerate(hh_vacancies, 1):
         vacancy['snippet']['requirement'],
         vacancy['experience']['name'],
         vacancy['has_test'],
-        vacancy['alternate_url'])
+        vacancy['alternate_url'],
+        rates_dict
+    )
+
+    print(i)
     print(vacancy)
 
 print("\n\n\n")
