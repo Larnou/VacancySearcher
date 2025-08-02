@@ -1,12 +1,12 @@
 from typing import Any
 
-from src.classes.RatesAPI import RatesAPI
-
+from src.classes.ratesapi import RatesAPI
 
 # Создать класс для работы с вакансиями. В этом классе самостоятельно определить атрибуты,
 # такие как название вакансии, ссылка на вакансию, зарплата, краткое описание или требования и т. п.
 # (всего не менее четырех атрибутов). Класс должен поддерживать методы сравнения вакансий между собой
 # по зарплате и валидировать данные, которыми инициализируются его атрибуты.
+
 
 class Vacancy:
     """
@@ -14,19 +14,29 @@ class Vacancy:
     Обеспечивает возможность сравнения вакансий по средней зарабной плате.
     """
 
-    __slots__ = ("name", "salary", "has_test", "experience", "requirement",
-                 "employer", "alternate_url", "avg_salary", "rates_dict")
+    __slots__ = (
+        "name",
+        "salary",
+        "has_test",
+        "experience",
+        "requirement",
+        "employer",
+        "alternate_url",
+        "avg_salary",
+        "rates_dict",
+    )
 
-    def __init__(self,
-                 name: str,
-                 salary: None | dict,
-                 employer: str,
-                 requirement: str,
-                 experience: str,
-                 has_test: bool,
-                 alternate_url: str,
-                 rates_dict: dict
-                 ) -> None:
+    def __init__(
+        self,
+        name: str,
+        salary: None | dict,
+        employer: str,
+        requirement: str,
+        experience: str,
+        has_test: bool,
+        alternate_url: str,
+        rates_dict: dict,
+    ) -> None:
         """
         Создаёт объект Vacancy.
         """
@@ -50,28 +60,26 @@ class Vacancy:
         self.employer = employer
         self.alternate_url = alternate_url
 
-
     @staticmethod
     def set_salary(salary: dict | None, rates_dict: dict):
 
         if isinstance(salary, dict):
-            salary_from = salary.get('from') or 0
-            salary_to = salary.get('to') or 0
-            currency = salary.get('currency') if salary.get('currency') != 'RUR' else 'RUB'
+            salary_from = salary.get("from") or 0
+            salary_to = salary.get("to") or 0
+            currency = salary.get("currency") if salary.get("currency") != "RUR" else "RUB"
 
-            if currency != 'RUB':
+            if currency != "RUB":
                 rates = RatesAPI().get_currency_rate(currency, rates_dict)
                 salary_from *= rates
                 salary_to *= rates
 
-            currency_salary = {'from': round(salary_from), 'to': round(salary_to), 'currency': 'RUB'}
+            currency_salary = {"from": round(salary_from), "to": round(salary_to), "currency": "RUB"}
             return currency_salary
 
         else:
-            currency_salary = {'from': 0, 'to': 0, 'currency': 'RUB'}
+            currency_salary = {"from": 0, "to": 0, "currency": "RUB"}
 
         return currency_salary
-
 
     @staticmethod
     def remove_from_requirement(requirement: str) -> str:
@@ -87,12 +95,11 @@ class Vacancy:
         new_requirement = new_requirement.replace("</highlighttext>", "")
         return new_requirement
 
-
     def calculate_avg_salary(self) -> float | None | Any:
         """Рассчитывает среднюю зарплату для сравнений"""
 
-        salary_from = self.salary.get('from')
-        salary_to = self.salary.get('to')
+        salary_from = self.salary.get("from")
+        salary_to = self.salary.get("to")
 
         if salary_from != 0 and salary_to != 0:
             return (salary_from + salary_to) / 2
@@ -106,19 +113,19 @@ class Vacancy:
 
     def get_salary_info(self) -> str:
         """
-            Возвращает форматированную информацию о зарплате.
+        Возвращает форматированную информацию о зарплате.
 
-            Returns:
-                Форматированная информация о зарплате.
+        Returns:
+            Форматированная информация о зарплате.
         """
 
-        salary_from = self.salary.get('from')
-        salary_to = self.salary.get('to')
+        salary_from = self.salary.get("from")
+        salary_to = self.salary.get("to")
 
         if salary_from + salary_to == 0:
             return "Не указана"
 
-        currency = self.salary.get('currency')
+        currency = self.salary.get("currency")
 
         # Обработка различных вариантов
         if salary_from != 0 and salary_to != 0 and salary_from != salary_to:
@@ -133,20 +140,20 @@ class Vacancy:
 
     def __str__(self) -> str:
         """
-            Строковое представление вакансии: Вакансия, Зарплата, Компания,
-            Требования, Опыт работы, Тестовое задание, Ссылка
+        Строковое представление вакансии: Вакансия, Зарплата, Компания,
+        Требования, Опыт работы, Тестовое задание, Ссылка
 
 
-            Returns:
-                Строковое представление вакансии.
+        Returns:
+            Строковое представление вакансии.
         """
         salary_info = self.get_salary_info()
-        has_test_info = 'Есть' if self.has_test else 'Нет'
+        has_test_info = "Есть" if self.has_test else "Нет"
 
         return (
             f"Вакансия: {self.name}\n"
             f"Зарплата: {salary_info}\n"
-            f"Компания: {self.employer[:100]}\n"
+            f"Компания: {self.employer}\n"
             f"Требования: {self.requirement[:140]}\n"
             f"Опыт работы: {self.experience}\n"
             f"Тестовое задание: {has_test_info}\n"
@@ -157,13 +164,18 @@ class Vacancy:
     # Если зп в разных валютах, надо перевести к рублям и сравнить
     def __eq__(self, other) -> bool:
         if not isinstance(other, Vacancy):
-            raise TypeError("Можно сравнивать только объекты Vacancy")
-        return self.avg_salary == other.avg_salary
+            raise TypeError("Можно сравнивать только объекты Vacancy!")
 
+        if self.avg_salary == 0 or other.avg_salary == 0:
+            raise TypeError("Эти вакансии нельзя сравнить, так как у одной из них не указана зарабоная плата.")
+        return self.avg_salary == other.avg_salary
 
     def __lt__(self, other) -> bool:
         if not isinstance(other, Vacancy):
-            raise TypeError("Можно сравнивать только объекты Vacancy")
+            raise TypeError("Можно сравнивать только объекты Vacancy!")
+
+        if self.avg_salary == 0 or other.avg_salary == 0:
+            raise TypeError("Эти вакансии нельзя сравнить, так как у одной из них не указана зарабоная плата.")
         return self.avg_salary < other.avg_salary
 
     def __le__(self, other) -> bool:
@@ -171,15 +183,14 @@ class Vacancy:
 
     def __gt__(self, other) -> bool:
         if not isinstance(other, Vacancy):
-            raise TypeError("Можно сравнивать только объекты Vacancy")
+            raise TypeError("Можно сравнивать только объекты Vacancy!")
+
+        if self.avg_salary == 0 or other.avg_salary == 0:
+            raise TypeError("Эти вакансии нельзя сравнить, так как у одной из них не указана зарабоная плата.")
         return self.avg_salary > other.avg_salary
 
     def __ge__(self, other) -> bool:
         return self.__gt__(other) or self.__eq__(other)
 
-
-
-
-
-    def cast_to_object_list(self):
-        pass
+    # def cast_to_object_list(self):
+    #     pass

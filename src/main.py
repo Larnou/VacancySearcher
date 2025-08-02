@@ -1,11 +1,9 @@
 import requests
 from cbrf.asyncio import DailyCurrenciesRates
 
-from src.classes.RatesAPI import RatesAPI
 from src.classes.headhunterapi import HeadHunterAPI
+from src.classes.ratesapi import RatesAPI
 from src.classes.vacancy import Vacancy
-
-
 
 # Та самая точка входа в работу программы
 # Создание экземпляра класса для работы с API сайтов с вакансиями и курса валют
@@ -18,14 +16,14 @@ rates_dict = rates_api.get_rates_by_api()
 
 for i, vacancy in enumerate(hh_vacancies, 1):
     vacancy = Vacancy(
-        vacancy['name'],
-        vacancy['salary'],
-        vacancy['employer']['name'],
-        vacancy['snippet']['requirement'],
-        vacancy['experience']['name'],
-        vacancy['has_test'],
-        vacancy['alternate_url'],
-        rates_dict
+        vacancy["name"],
+        vacancy["salary"],
+        vacancy["employer"]["name"],
+        vacancy["snippet"]["requirement"],
+        vacancy["experience"]["name"],
+        vacancy["has_test"],
+        vacancy["alternate_url"],
+        rates_dict,
     )
 
     print(i)
@@ -34,10 +32,8 @@ for i, vacancy in enumerate(hh_vacancies, 1):
 print("\n\n\n")
 
 
-
 # Преобразование набора данных из JSON в список объектов
 vacancies_list = Vacancy.cast_to_object_list(hh_vacancies)
-
 
 
 # Сохранение информации о вакансиях в файл
