@@ -1,9 +1,9 @@
-import requests
-from cbrf.asyncio import DailyCurrenciesRates
 
-from src.classes.headhunterapi import HeadHunterAPI
+
+from src.classes.headhunter_api import HeadHunterAPI
 from src.classes.ratesapi import RatesAPI
 from src.classes.vacancy import Vacancy
+from src.classes.vacancy_manager import VacancyManager
 
 # Та самая точка входа в работу программы
 # Создание экземпляра класса для работы с API сайтов с вакансиями и курса валют
@@ -14,32 +14,35 @@ rates_api = RatesAPI()
 hh_vacancies = hh_api.get_vacancies("Python")
 rates_dict = rates_api.get_rates_by_api()
 
-for i, vacancy in enumerate(hh_vacancies, 1):
-    vacancy = Vacancy(
-        vacancy["name"],
-        vacancy["salary"],
-        vacancy["employer"]["name"],
-        vacancy["snippet"]["requirement"],
-        vacancy["experience"]["name"],
-        vacancy["has_test"],
-        vacancy["alternate_url"],
-        rates_dict,
-    )
+# Преобразование набора данных из JSON в список объектов
+vacancies_list = Vacancy.cast_to_object_list(hh_vacancies, rates_dict)
 
+print(vacancies_list)
+for i, vacancy in enumerate(vacancies_list, 1):
     print(i)
     print(vacancy)
-
-print("\n\n\n")
-
-
-# Преобразование набора данных из JSON в список объектов
-vacancies_list = Vacancy.cast_to_object_list(hh_vacancies)
-
+    print("\n")
 
 # Сохранение информации о вакансиях в файл
-json_saver = JSONSaver()
+vacancy = Vacancy(name="Similar", salary={"from": 100000, "to": 150000, "currency": "RUB"}, employer="Company", requirement="Desc",
+        experience="1-3 years", has_test=True, alternate_url="https://example.com/similar", rates_dict={})
+vacancy1 = Vacancy(name="Developer", salary={"from": 10000, "to": 150000, "currency": "RUB"}, employer="Company", requirement="Desc",
+        experience="1-3 years", has_test=True, alternate_url="https://example.com/delepop", rates_dict={})
+
+# VacancyManager init
+json_saver = VacancyManager()
+
+# add vacancy
 json_saver.add_vacancy(vacancy)
+json_saver.add_vacancy(vacancy1)
+
+# check vacancies
+vac = json_saver.get_vacancies()
+print(vac)
+
 json_saver.delete_vacancy(vacancy)
+vac = json_saver.get_vacancies()
+print(vac)
 
 
 # Функция для взаимодействия с пользователем

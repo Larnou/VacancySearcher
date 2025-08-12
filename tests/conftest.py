@@ -1,7 +1,7 @@
 import pytest
 import requests
 
-from src.classes.headhunterapi import HeadHunterAPI
+from src.classes.headhunter_api import HeadHunterAPI
 from src.classes.ratesapi import RatesAPI
 from src.classes.vacancy import Vacancy
 

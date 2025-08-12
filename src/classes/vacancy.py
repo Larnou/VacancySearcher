@@ -45,9 +45,6 @@ class Vacancy:
         if not name:
             raise ValueError("Название вакансии не может быть пустым")
 
-        if not requirement:
-            raise ValueError("Описание вакансии не может быть пустым")
-
         if not alternate_url.startswith("http"):
             raise ValueError("Некорректный URL вакансии")
 
@@ -61,7 +58,16 @@ class Vacancy:
         self.alternate_url = alternate_url
 
     @staticmethod
-    def set_salary(salary: dict | None, rates_dict: dict):
+    def set_salary(salary: dict | None, rates_dict: dict) -> dict:
+        """
+        Задаёт словарь с информацией по заработной плате.
+
+        Args:
+            salary: Словарь с информацией по заработной плате.
+            rates_dict: Словарь с информацией по курсу валют для правильного перевода в рубли.
+        Returns:
+            Обновлённый словарь с информацией по заработной плате.
+        """
 
         if isinstance(salary, dict):
             salary_from = salary.get("from") or 0
@@ -91,6 +97,7 @@ class Vacancy:
         Returns:
             Строка требований.
         """
+        requirement = '' if not requirement else requirement
         new_requirement = requirement.replace("<highlighttext>", "")
         new_requirement = new_requirement.replace("</highlighttext>", "")
         return new_requirement
@@ -143,7 +150,6 @@ class Vacancy:
         Строковое представление вакансии: Вакансия, Зарплата, Компания,
         Требования, Опыт работы, Тестовое задание, Ссылка
 
-
         Returns:
             Строковое представление вакансии.
         """
@@ -192,5 +198,30 @@ class Vacancy:
     def __ge__(self, other) -> bool:
         return self.__gt__(other) or self.__eq__(other)
 
-    # def cast_to_object_list(self):
-    #     pass
+    @staticmethod
+    def cast_to_object_list(vacancy_list_input: list[dict], rates_dict: dict) -> list:
+        """
+        Переводит JSON данные в список объектов Vacancy.
+
+        Args:
+            vacancy_list_input: Список вакансий в формате JSON строки.
+            rates_dict: Словарь с информацией по курсу валют для правильного перевода в рубли.
+        Returns:
+            Список объектов Vacancy.
+        """
+
+        vacancy_list_output = []
+        for vacany_info in vacancy_list_input:
+            vacancy = Vacancy(
+                vacany_info["name"],
+                vacany_info["salary"],
+                vacany_info["employer"]["name"],
+                vacany_info["snippet"]["requirement"],
+                vacany_info["experience"]["name"],
+                vacany_info["has_test"],
+                vacany_info["alternate_url"],
+                rates_dict,
+            )
+            vacancy_list_output.append(vacancy)
+
+        return vacancy_list_output

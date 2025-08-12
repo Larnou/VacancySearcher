@@ -59,7 +59,7 @@ class HeadHunterAPI(Parser):
             Список вакансий, содержащих ключевое слово.
         """
         self.__params["text"] = keyword
-        while self.__params.get("page") != 2:
+        while self.__params.get("page") != 1:
             vacancies = self.get_vacancies_by_api()
             self.__vacancies.extend(vacancies)
             self.__params["page"] += 1
