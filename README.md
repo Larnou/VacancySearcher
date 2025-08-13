@@ -29,19 +29,39 @@ poetry install
 
 * `HeadHunterAPI` — Класс HeadHunterAPI, обеспечивает связь с HH Api и получение списка 
 вакансий с указанием ключевого слова.
-
 * `Parser` — Абстрактный класс Parser, обеспечивает требования к реализации методов для подключения к API.
 * `Vacancy` — Класс Vacancy, позволяет хранить информацию о вакансии в удобном виде. 
 Обеспечивает возможность сравнения вакансий по средней зарабной плате.
 * `RatesAPI` — Класс RatesAPI, обеспечивает получение информации по курсу валют. 
 Необходим для конвертации заработной платы из других валют в рубль.
+* `Repository` - Абстрактный класс Repository, обеспечивает требования для обработки 
+данных с вакансиями. В требование входят добавление вакансии, добавление списка 
+вакансий, удаление вакансии из списка, сохранение в файл и загрузка данных из файла
+* `VacancyManager` - Класс VacancyManager, позволяет хранить, создавать, удалять и возвращать список вакансий типа Vacancy. 
+Хранение реализовано через словарь с ключом по url вакансии. Примеры работы представлены ниже:
+```python
+from src.classes.vacancy_manager import VacancyManager
+from src.classes.vacancy import Vacancy
+from src.classes.rates_api import RatesAPI
 
+# Получение курса валют
+rates_api = RatesAPI()
+rates_dict = rates_api.get_rates_by_api()
+
+# Создание менеджера вакансий и загрузка данных с файла JSON
+loader = VacancyManager()
+data = loader.load_from_json(filename="vacancies.json")
+
+# Создание списка вакансий в менеджере
+vacancies = Vacancy.cast_to_object_list(data, rates_dict)
+loader.add_list_of_vacancies(vacancies)
+
+# Получение списка вакансий из менеджера
+loader_vacancies = loader.get_vacancies()
+```
 
 **Функции**
-
 * В работе
-
-
 ---
 
 ## ⚙️ Тестирование

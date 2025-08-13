@@ -514,7 +514,7 @@
             "salary": {
                 "from": 800,
                 "to": null,
-                "currency": "BYR",
+                "currency": "EUR",
                 "gross": false
             },
             "type": {

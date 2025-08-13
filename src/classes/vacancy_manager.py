@@ -1,3 +1,8 @@
+import json
+
+from pathlib import Path
+from typing import Any
+
 from src.classes.repository import Repository
 from src.classes.vacancy import Vacancy
 
@@ -20,6 +25,7 @@ class VacancyManager(Repository):
         Args:
             vacancy: Вакансия, которая будет добавлена к списку менеджера.
         """
+        print(vacancy)
         url = vacancy.alternate_url
         if url not in self.vacancies:
             self.vacancies[url] = vacancy
@@ -68,9 +74,33 @@ class VacancyManager(Repository):
             return False
 
 
-    def load_from_file(self, json_file):
-        pass
-
     def save_to_file(self, json_file):
         pass
 
+    @staticmethod
+    def load_from_json(filename: str, home_directiry: str = None) -> list[Any] | Any:
+        """
+        Чтение json-файла.
+        Args:
+            filename: Название файла.
+            home_directiry: Директория хранения файлов.
+
+        Returns: JSON-файл.
+        """
+        if home_directiry is None:
+            current_file = Path(__file__).resolve()
+            BASE_DIR = current_file.parent.parent.parent
+            DATA_PATH = BASE_DIR / "data" / filename
+        else:
+            current_file = Path(__file__).resolve()
+            base_dir = current_file.parent.parent.parent
+            DATA_PATH = base_dir / home_directiry / filename
+
+        try:
+            with open(DATA_PATH, encoding="utf8") as f:
+                data = json.load(f)
+
+            return data['items']
+        except (FileNotFoundError, json.JSONDecodeError, UnicodeDecodeError, PermissionError, IsADirectoryError) as e:
+            print(e)
+            return []

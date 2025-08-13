@@ -1,7 +1,7 @@
 
 
 from src.classes.headhunter_api import HeadHunterAPI
-from src.classes.ratesapi import RatesAPI
+from src.classes.rates_api import RatesAPI
 from src.classes.vacancy import Vacancy
 from src.classes.vacancy_manager import VacancyManager
 
@@ -43,7 +43,28 @@ print(vac)
 json_saver.delete_vacancy(vacancy)
 vac = json_saver.get_vacancies()
 print(vac)
+print("\n\n\n\n\n")
 
+
+# =================================
+# Загрузка из файлов
+print('ТУТ ЗАГРУЗКА ИЗ ФАЙЛА И СОХРАНЕНИЕ В ФАЙЛ!!!!!!!!!!!!!!!!!!!!!!!!!!')
+loader = VacancyManager()
+dataload = loader.load_from_json(filename="vacancies.json")
+
+vac1 = Vacancy.cast_to_object_list(dataload, rates_dict)
+loader.add_list_of_vacancies(vac1)
+
+vac2 = loader.get_vacancies(print_vacancies=True)
+print(vac2)
+
+print(1/0)
+
+
+
+
+
+# =================================
 
 # Функция для взаимодействия с пользователем
 def user_interaction():

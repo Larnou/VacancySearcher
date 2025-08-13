@@ -1,6 +1,6 @@
 from typing import Any
 
-from src.classes.ratesapi import RatesAPI
+from src.classes.rates_api import RatesAPI
 
 # Создать класс для работы с вакансиями. В этом классе самостоятельно определить атрибуты,
 # такие как название вакансии, ссылка на вакансию, зарплата, краткое описание или требования и т. п.

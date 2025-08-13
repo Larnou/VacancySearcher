@@ -1,4 +1,5 @@
 from abc import ABC, abstractmethod
+from typing import Any
 
 from src.classes.vacancy import Vacancy
 
@@ -37,6 +38,6 @@ class Repository(ABC):
         pass
 
 
-    @abstractmethod
-    def load_from_file(self):
+    @staticmethod
+    def load_from_json(filename: str, home_directiry: str = None) -> list[Any] | Any:
         pass
