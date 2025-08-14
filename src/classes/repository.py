@@ -19,7 +19,6 @@ class Repository(ABC):
         """
         pass
 
-
     @abstractmethod
     def delete_vacancy(self, vacancy: Vacancy):
         """
@@ -32,12 +31,12 @@ class Repository(ABC):
         """
         pass
 
-
+    @staticmethod
     @abstractmethod
-    def save_to_file(self):
+    def save_to_json(vacancies_list: list[Vacancy], filename: str, home_directiry: str = None):
         pass
 
-
     @staticmethod
+    @abstractmethod
     def load_from_json(filename: str, home_directiry: str = None) -> list[Any] | Any:
         pass

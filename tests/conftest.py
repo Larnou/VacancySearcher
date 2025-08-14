@@ -1,5 +1,4 @@
 import pytest
-import requests
 
 from src.classes.headhunter_api import HeadHunterAPI
 from src.classes.rates_api import RatesAPI

@@ -58,6 +58,9 @@ loader.add_list_of_vacancies(vacancies)
 
 # Получение списка вакансий из менеджера
 loader_vacancies = loader.get_vacancies()
+
+# Сохранение данных в JSON-файл
+loader.save_to_json('filename.json')
 ```
 
 **Функции**

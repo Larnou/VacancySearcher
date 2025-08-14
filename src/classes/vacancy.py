@@ -97,7 +97,7 @@ class Vacancy:
         Returns:
             Строка требований.
         """
-        requirement = '' if not requirement else requirement
+        requirement = "" if not requirement else requirement
         new_requirement = requirement.replace("<highlighttext>", "")
         new_requirement = new_requirement.replace("</highlighttext>", "")
         return new_requirement
@@ -225,3 +225,15 @@ class Vacancy:
             vacancy_list_output.append(vacancy)
 
         return vacancy_list_output
+
+    def to_dict(self) -> dict:
+        """Преобразует объект Vacancy в словарь для сериализации"""
+        return {
+            "name": self.name,
+            "salary": self.salary,
+            "has_test": self.has_test,
+            "experience": {"name": self.experience},
+            "snippet": {"requirement": self.requirement},
+            "employer": {"name": self.employer},
+            "alternate_url": self.alternate_url,
+        }

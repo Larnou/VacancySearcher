@@ -1,87 +1,89 @@
-
-
 from src.classes.headhunter_api import HeadHunterAPI
 from src.classes.rates_api import RatesAPI
 from src.classes.vacancy import Vacancy
 from src.classes.vacancy_manager import VacancyManager
+from src.utils import filtration_by_experience, filtration_by_keywords, filtration_by_min_salary, filtration_by_salary
 
 # Та самая точка входа в работу программы
 # Создание экземпляра класса для работы с API сайтов с вакансиями и курса валют
-hh_api = HeadHunterAPI()
-rates_api = RatesAPI()
+# hh_api = HeadHunterAPI()
+# rates_api = RatesAPI()
+#
+# # Получение вакансий с hh.ru в формате JSON и курса валют для вычисления зарплат в рублях
+# hh_vacancies = hh_api.get_vacancies("Python")
+# rates_dict = rates_api.get_rates_by_api()
+#
+# # Преобразование набора данных из JSON в список объектов
+# vacancies_list = Vacancy.cast_to_object_list(hh_vacancies, rates_dict)
 
-# Получение вакансий с hh.ru в формате JSON
-hh_vacancies = hh_api.get_vacancies("Python")
-rates_dict = rates_api.get_rates_by_api()
-
-# Преобразование набора данных из JSON в список объектов
-vacancies_list = Vacancy.cast_to_object_list(hh_vacancies, rates_dict)
-
-print(vacancies_list)
-for i, vacancy in enumerate(vacancies_list, 1):
-    print(i)
-    print(vacancy)
-    print("\n")
-
-# Сохранение информации о вакансиях в файл
-vacancy = Vacancy(name="Similar", salary={"from": 100000, "to": 150000, "currency": "RUB"}, employer="Company", requirement="Desc",
-        experience="1-3 years", has_test=True, alternate_url="https://example.com/similar", rates_dict={})
-vacancy1 = Vacancy(name="Developer", salary={"from": 10000, "to": 150000, "currency": "RUB"}, employer="Company", requirement="Desc",
-        experience="1-3 years", has_test=True, alternate_url="https://example.com/delepop", rates_dict={})
-
-# VacancyManager init
-json_saver = VacancyManager()
-
-# add vacancy
-json_saver.add_vacancy(vacancy)
-json_saver.add_vacancy(vacancy1)
-
-# check vacancies
-vac = json_saver.get_vacancies()
-print(vac)
-
-json_saver.delete_vacancy(vacancy)
-vac = json_saver.get_vacancies()
-print(vac)
-print("\n\n\n\n\n")
-
-
-# =================================
-# Загрузка из файлов
-print('ТУТ ЗАГРУЗКА ИЗ ФАЙЛА И СОХРАНЕНИЕ В ФАЙЛ!!!!!!!!!!!!!!!!!!!!!!!!!!')
-loader = VacancyManager()
-dataload = loader.load_from_json(filename="vacancies.json")
-
-vac1 = Vacancy.cast_to_object_list(dataload, rates_dict)
-loader.add_list_of_vacancies(vac1)
-
-vac2 = loader.get_vacancies(print_vacancies=True)
-print(vac2)
-
-print(1/0)
-
-
-
-
-
-# =================================
 
 # Функция для взаимодействия с пользователем
-def user_interaction():
-    platforms = ["HeadHunter"]
-    search_query = input("Введите поисковый запрос: ")
-    top_n = int(input("Введите количество вакансий для вывода в топ N: "))
-    filter_words = input("Введите ключевые слова для фильтрации вакансий: ").split()
-    salary_range = input("Введите диапазон зарплат: ")  # Пример: 100000 - 150000
+# def user_interaction():
+#     platforms = ["HeadHunter"]
+#     search_query = input("Введите поисковый запрос: ")
+#     top_n = int(input("Введите количество вакансий для вывода в топ N: "))
+#     filter_words = input("Введите ключевые слова для фильтрации вакансий: ").split()
+#     salary_range = input("Введите диапазон зарплат: ")  # Пример: 100000 - 150000
+#
+#     filtered_vacancies = filter_vacancies(vacancies_list, filter_words)
+#
+#     ranged_vacancies = get_vacancies_by_salary(filtered_vacancies, salary_range)
+#
+#     sorted_vacancies = sort_vacancies(ranged_vacancies)
+#     top_vacancies = get_top_vacancies(sorted_vacancies, top_n)
+#     print_vacancies(top_vacancies)
 
-    filtered_vacancies = filter_vacancies(vacancies_list, filter_words)
 
-    ranged_vacancies = get_vacancies_by_salary(filtered_vacancies, salary_range)
+def user_interaction(manager: VacancyManager):
+    """Функция для взаимодействия с пользователем"""
+    print("\nДоступные команды фильтрации:")
+    print("1. По ключевым словам")
+    print("2. По минимальной зарплате")
+    print("3. По опыту работы")
+    print("4. Только с указанной зарплатой")
 
-    sorted_vacancies = sort_vacancies(ranged_vacancies)
-    top_vacancies = get_top_vacancies(sorted_vacancies, top_n)
-    print_vacancies(top_vacancies)
+    choice = input("\nВыберите тип фильтра (1-4): ").strip()
+
+    if choice == "1":
+        filtration_by_keywords(manager)
+        return None
+
+    elif choice == "2":
+        filtration_by_min_salary(manager)
+        return None
+
+    elif choice == "3":
+        filtration_by_experience(manager)
+        return None
+
+    elif choice == "4":
+        filtration_by_salary(manager)
+        return None
+
+    else:
+        print("Неверный выбор")
+        return None
 
 
 if __name__ == "__main__":
-    user_interaction()
+    # Создание экземпляра класса для работы с API сайтов с вакансиями и курса валют
+    hh_api = HeadHunterAPI()
+    rates_api = RatesAPI()
+
+    # Получение вакансий с hh.ru в формате JSON и курса валют для вычисления зарплат в рублях
+    hh_vacancies = hh_api.get_vacancies("Python")
+    rates_dict = rates_api.get_rates_by_api()
+
+    # Загрузка набора данных из JSON в список объектов
+    vacancy_manager = VacancyManager()
+    vacancy_data = vacancy_manager.load_from_json("vacancies.json")
+    vacancies = Vacancy.cast_to_object_list(vacancy_data, rates_dict)
+    vacancy_manager.add_list_of_vacancies(vacancies)
+
+    # Преобразование набора данных из JSON в список объектов
+    # vacancies_list = Vacancy.cast_to_object_list(hh_vacancies, rates_dict)
+    # vacancy_manager = VacancyManager()
+    # vacancy_manager.add_list_of_vacancies(vacancies_list)
+    # vacancy_manager.save_to_json('vacan.json')
+
+    user_interaction(vacancy_manager)
