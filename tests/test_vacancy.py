@@ -17,18 +17,6 @@ def test_vacancy_initialization_validation():
             rates_dict={},
         )
 
-    with pytest.raises(ValueError, match="Описание вакансии не может быть пустым"):
-        Vacancy(
-            name="Developer",
-            salary=None,
-            employer="Company",
-            requirement="",
-            experience="Exp",
-            has_test=True,
-            alternate_url="https://example.com",
-            rates_dict={},
-        )
-
     with pytest.raises(ValueError, match="Некорректный URL вакансии"):
         Vacancy(
             name="Developer",

@@ -12,13 +12,13 @@ class VacancyManager(Repository):
     Хранение реализовано через словарь с ключом по url вакансии.
     """
 
-    def __init__(self):
+    def __init__(self) -> None:
         """
         Создаёт объект VacancyManager.
         """
         self.vacancies = {}
 
-    def add_vacancy(self, vacancy: Vacancy):
+    def add_vacancy(self, vacancy: Vacancy) -> None:
         """
         Добавление вакансии к списку вакансий менеджера.
 
@@ -32,7 +32,7 @@ class VacancyManager(Repository):
         else:
             raise ValueError("Эта вакансия уже добавлена в список!")
 
-    def add_list_of_vacancies(self, list_of_vacancies: list):
+    def add_list_of_vacancies(self, list_of_vacancies: list) -> None:
         """
         Добавление набора вакансий к списку вакансий менеджера.
 
@@ -73,7 +73,15 @@ class VacancyManager(Repository):
         except KeyError:
             return False
 
-    def save_to_json(self, vacancies_list: list[Vacancy], filename: str, home_directiry: str = None):
+    @staticmethod
+    def save_to_json(vacancies_list: list[Vacancy], filename: str, home_directiry: str = None) -> None:
+        """
+        Сохранение списка вакансий в json-файл.
+        Args:
+            vacancies_list: Список вакансий.
+            filename: Название файла.
+            home_directiry: Директория хранения файлов.
+        """
         if home_directiry is None:
             current_file = Path(__file__).resolve()
             BASE_DIR = current_file.parent.parent.parent
@@ -120,7 +128,14 @@ class VacancyManager(Repository):
             print(e)
             return []
 
-    def filter_by_keywords(self, keywords: str):
+    def filter_by_keywords(self, keywords: str) -> list[Vacancy]:
+        """
+        Фильтрация списка вакансий по наличию ключевых слов.
+        Args:
+            keywords: Название файла.
+
+        Returns: Список отфильтрованных вакансий.
+        """
         search_words = [word.strip().lower() for word in keywords.split(" ")]
         return [
             v
@@ -128,11 +143,32 @@ class VacancyManager(Repository):
             if all(word in f"{v.name} {v.requirement} {v.employer}".lower() for word in search_words)
         ]
 
-    def filter_by_min_salary(self, min_salary: float):
+    def filter_by_min_salary(self, min_salary: float) -> list[Vacancy]:
+        """
+        Фильтрация списка вакансий минимальному уровню заработной платы.
+        Args:
+            min_salary: Минимальный уровень заработной платы.
+
+        Returns: Список отфильтрованных вакансий.
+        """
         return [v for v in self.vacancies.values() if v.avg_salary == 0 or v.avg_salary >= min_salary]
 
-    def filter_by_experience(self, experience: str):
+    def filter_by_experience(self, experience: str) -> list[Vacancy]:
+        """
+        Фильтрация списка вакансий по наличию опыта.
+        Args:
+            experience: Опыт работы.
+
+        Returns: Список отфильтрованных вакансий.
+        """
         return [v for v in self.vacancies.values() if v.experience == experience]
 
-    def filter_by_salary(self, salary: float):
+    def filter_by_salary(self, salary: float) -> list[Vacancy]:
+        """
+        Фильтрация списка вакансий минимальному уровню заработной платы для вакансий с указанным уровнем зарплаты.
+        Args:
+            salary: Минимальный уровень заработной платы.
+
+        Returns: Список отфильтрованных вакансий.
+        """
         return [v for v in self.vacancies.values() if v.avg_salary > 0 and v.avg_salary >= salary]

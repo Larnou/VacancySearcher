@@ -26,7 +26,7 @@ from requests import RequestException
 def test_get_rates_by_api(rates_api, mocker, status_code, response_data, expected, exception):
     """Тестирование различных сценариев получения курсов валют"""
     # Мокаем requests.get
-    mock_get = mocker.patch("src.classes.ratesapi.requests.get")
+    mock_get = mocker.patch("src.classes.rates_api.requests.get")
 
     if exception == RequestException:
         mock_get.side_effect = RequestException("Connection error")
@@ -106,7 +106,7 @@ def test_real_api_response(rates_api):
 
 def test_api_url(rates_api, mocker):
     """Проверка URL API вызова"""
-    mock_get = mocker.patch("src.classes.ratesapi.requests.get")
+    mock_get = mocker.patch("src.classes.rates_api.requests.get")
     mock_response = mock_get.return_value
     mock_response.status_code = 200
     mock_response.json.return_value = {"Valute": {}}

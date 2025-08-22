@@ -34,9 +34,24 @@ class Repository(ABC):
     @staticmethod
     @abstractmethod
     def save_to_json(vacancies_list: list[Vacancy], filename: str, home_directiry: str = None):
+        """
+        Сохранение списка вакансий в json-файл.
+        Args:
+            vacancies_list: Список вакансий.
+            filename: Название файла.
+            home_directiry: Директория хранения файлов.
+        """
         pass
 
     @staticmethod
     @abstractmethod
     def load_from_json(filename: str, home_directiry: str = None) -> list[Any] | Any:
+        """
+        Чтение json-файла.
+        Args:
+            filename: Название файла.
+            home_directiry: Директория хранения файлов.
+
+        Returns: JSON-файл.
+        """
         pass

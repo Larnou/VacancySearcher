@@ -1,17 +1,5 @@
-#     filtered_vacancies = filter_vacancies(vacancies_list, filter_words)
-#     ranged_vacancies = get_vacancies_by_salary(filtered_vacancies, salary_range)
-#     sorted_vacancies = sort_vacancies(ranged_vacancies)
-#     top_vacancies = get_top_vacancies(sorted_vacancies, top_n)
 from src.classes.vacancy import Vacancy
 from src.classes.vacancy_manager import VacancyManager
-
-# "name": self.name,
-#             "salary": self.salary,
-#             "has_test": self.has_test,
-#             "experience": self.experience,
-#             "requirement": self.requirement,
-#             "employer": self.employer,
-#             "alternate_url": self.alternate_url,
 
 
 def followup_actions(manager: VacancyManager, vacancies: list[Vacancy]) -> None:

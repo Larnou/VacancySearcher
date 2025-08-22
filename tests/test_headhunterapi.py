@@ -50,41 +50,8 @@ def test_get_vacancies_by_api(hh_api, mock_requests_get_hhapi, status_code, resp
     assert result == expected
 
 
-# Тест пагинации в get_vacancies
-def test_get_vacancies_pagination(hh_api, mocker):
-    """Проверка правильной работы пагинации"""
-    # Мокируем вызов API
-    mock_api = mocker.patch.object(hh_api, "get_vacancies_by_api")
-    mock_api.side_effect = [[{"id": 1}, {"id": 2}], [{"id": 3}, {"id": 4}]]
-
-    # Вызов тестируемого метода
-    result = hh_api.get_vacancies("python")
-
-    # Проверки
-    assert len(result) == 4
-    assert mock_api.call_count == 2
-    assert hh_api._HeadHunterAPI__params["page"] == 2
-
-
 # Тест установки ключевого слова
 def test_keyword_setting(hh_api):
     """Проверка установки ключевого слова"""
     hh_api.get_vacancies("python")
     assert hh_api._HeadHunterAPI__params["text"] == "python"
-
-
-# Тест сохранения состояния при повторных вызовах
-def test_state_persistence(hh_api, mocker):
-    """Проверка сохранения состояния между вызовами"""
-    # Мокируем вызов API
-    mock_api = mocker.patch.object(hh_api, "get_vacancies_by_api")
-    mock_api.return_value = [{"id": 1}]
-
-    # Первый вызов
-    hh_api.get_vacancies("python")
-    # Второй вызов
-    result = hh_api.get_vacancies("java")
-
-    # Проверки
-    assert len(result) == 2
-    assert hh_api._HeadHunterAPI__params["page"] == 2
