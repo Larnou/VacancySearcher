@@ -5,8 +5,17 @@ from src.classes.vacancy_manager import VacancyManager
 from src.utils import filtration_by_experience, filtration_by_keywords, filtration_by_min_salary, filtration_by_salary
 
 
-def user_interaction(manager: VacancyManager):
-    """Функция для взаимодействия с пользователем"""
+def user_interaction(manager: VacancyManager) -> None:
+    """
+    Функция для взаимодействия с пользователем.
+
+    Args:
+        manager: Менеджер вакансий, в котором содержится список вакансий после работы API-сервисов.
+    Returns:
+        Список вакансий, содержащих ключевое слово.
+    """
+
+    """"""
     print("\nДоступные команды фильтрации:")
     print("1. По ключевым словам")
     print("2. По минимальной зарплате")

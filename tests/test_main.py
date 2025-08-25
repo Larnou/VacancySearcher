@@ -1,19 +1,11 @@
-import sys
-from unittest.mock import patch, Mock
+from unittest.mock import patch
 
-import pytest
-
-from src.classes.headhunter_api import HeadHunterAPI
-from src.classes.rates_api import RatesAPI
-from src.classes.vacancy import Vacancy
-from src.classes.vacancy_manager import VacancyManager
 from src.main import user_interaction
 
 
 def test_user_interaction_keywords(mock_manager, capsys):
     """Тестирование выбора фильтрации по ключевым словам"""
-    with patch('builtins.input', return_value='1'), \
-            patch('src.main.filtration_by_keywords') as mock_filter:
+    with patch("builtins.input", return_value="1"), patch("src.main.filtration_by_keywords") as mock_filter:
         user_interaction(mock_manager)
 
         # Проверяем, что функция фильтрации была вызвана
@@ -27,8 +19,7 @@ def test_user_interaction_keywords(mock_manager, capsys):
 
 def test_user_interaction_min_salary(mock_manager, capsys):
     """Тестирование выбора фильтрации по минимальной зарплате"""
-    with patch('builtins.input', return_value='2'), \
-            patch('src.main.filtration_by_min_salary') as mock_filter:
+    with patch("builtins.input", return_value="2"), patch("src.main.filtration_by_min_salary") as mock_filter:
         user_interaction(mock_manager)
 
         # Проверяем, что функция фильтрации была вызвана
@@ -37,8 +28,7 @@ def test_user_interaction_min_salary(mock_manager, capsys):
 
 def test_user_interaction_experience(mock_manager, capsys):
     """Тестирование выбора фильтрации по опыту работы"""
-    with patch('builtins.input', return_value='3'), \
-            patch('src.main.filtration_by_experience') as mock_filter:
+    with patch("builtins.input", return_value="3"), patch("src.main.filtration_by_experience") as mock_filter:
         user_interaction(mock_manager)
 
         # Проверяем, что функция фильтрации была вызвана
@@ -47,8 +37,7 @@ def test_user_interaction_experience(mock_manager, capsys):
 
 def test_user_interaction_salary(mock_manager, capsys):
     """Тестирование выбора фильтрации по зарплате"""
-    with patch('builtins.input', return_value='4'), \
-            patch('src.main.filtration_by_salary') as mock_filter:
+    with patch("builtins.input", return_value="4"), patch("src.main.filtration_by_salary") as mock_filter:
         user_interaction(mock_manager)
 
         # Проверяем, что функция фильтрации была вызвана
@@ -57,7 +46,7 @@ def test_user_interaction_salary(mock_manager, capsys):
 
 def test_user_interaction_invalid_choice(mock_manager, capsys):
     """Тестирование обработки неверного выбора"""
-    with patch('builtins.input', return_value='5'):
+    with patch("builtins.input", return_value="5"):
         user_interaction(mock_manager)
 
         # Проверяем вывод сообщения об ошибке

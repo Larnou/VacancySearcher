@@ -1,4 +1,5 @@
 import json
+from typing import Any
 
 import requests
 
@@ -24,7 +25,16 @@ class HeadHunterAPI(Parser):
         self.__params = {"text": "", "page": 0, "per_page": 10}
         self.__vacancies = []
 
-    def get_vacancies_by_api(self) -> list[dict]:
+    def connect_to_api(self) -> requests.Response:
+        """
+        Подключение к HH Api.
+
+        Returns:
+            Response подключения API.
+        """
+        return requests.get(self.__API_URL, headers=self.__headers, params=self.__params)
+
+    def __get_vacancies_by_api(self) -> list[dict[Any, Any]]:
         """
         Получает список вакансий через подключение к HH Api.
 
@@ -32,7 +42,7 @@ class HeadHunterAPI(Parser):
             Список вакансий
         """
         try:
-            response = requests.get(self.__API_URL, headers=self.__headers, params=self.__params)
+            response = self.connect_to_api()
 
             # Проверка статус-кода ответа
             if response.status_code != 200:
@@ -49,7 +59,7 @@ class HeadHunterAPI(Parser):
             print(f"Ошибка обработки ответа API: {e}")
             return []
 
-    def get_vacancies(self, keyword) -> list[dict]:
+    def get_vacancies(self, keyword: str) -> list[dict]:
         """
         Получение вакансий по заданному ключевому слову keyword.
 
@@ -60,7 +70,7 @@ class HeadHunterAPI(Parser):
         """
         self.__params["text"] = keyword
         while self.__params.get("page") != 1:
-            vacancies = self.get_vacancies_by_api()
+            vacancies = self.__get_vacancies_by_api()
             self.__vacancies.extend(vacancies)
             self.__params["page"] += 1
 

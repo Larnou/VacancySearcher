@@ -1,7 +1,7 @@
 import json
 
 import pytest
-from requests import RequestException
+import requests
 
 
 # Тесты инициализации
@@ -12,7 +12,6 @@ def test_initialization(hh_api):
     assert hh_api._HeadHunterAPI__vacancies == []
 
 
-# Параметризованные тесты для get_vacancies_by_api
 @pytest.mark.parametrize(
     "status_code, response_data, expected, exception",
     [
@@ -21,36 +20,48 @@ def test_initialization(hh_api):
         # Ошибка HTTP
         (404, None, [], None),
         # Ошибка сети
-        (200, None, [], RequestException),
+        (200, None, [], requests.exceptions.RequestException),
         # Ошибка JSON
         (200, "invalid_json", [], json.JSONDecodeError),
         # Отсутствие ключа items
         (200, {"data": []}, [], KeyError),
     ],
 )
-def test_get_vacancies_by_api(hh_api, mock_requests_get_hhapi, status_code, response_data, expected, exception):
-    """Тестирование различных сценариев get_vacancies_by_api"""
-    # Настройка мока
-    mock_response = mock_requests_get_hhapi.return_value
-    mock_response.status_code = status_code
+def test_get_vacancies_by_api(hh_api, status_code, response_data, expected, exception, mocker, capsys):
+    """Тестирование различных сценариев __get_vacancies_by_api"""
+    mock_connect = mocker.patch.object(hh_api, "connect_to_api")
 
-    if exception == RequestException:
-        mock_requests_get_hhapi.side_effect = RequestException("Connection error")
-    elif exception == json.JSONDecodeError:
-        mock_response.json.side_effect = json.JSONDecodeError("Error", "doc", 0)
-    elif exception == KeyError:
-        mock_response.json.return_value = response_data
+    if exception == requests.exceptions.RequestException:
+        mock_connect.side_effect = exception("Connection error")
     else:
-        mock_response.json.return_value = response_data
+        mock_response = mocker.Mock()
+        mock_response.status_code = status_code
 
-    # Вызов тестируемого метода
-    result = hh_api.get_vacancies_by_api()
+        if status_code == 200:
+            if exception == json.JSONDecodeError:
+                mock_response.json.side_effect = json.JSONDecodeError("Error", "doc", 0)
+            else:
+                mock_response.json.return_value = response_data
+        else:
+            mock_response.json.side_effect = Exception("JSON should not be called for non-200 status")
 
-    # Проверка результата
+        mock_connect.return_value = mock_response
+
+    result = hh_api._HeadHunterAPI__get_vacancies_by_api()
+
     assert result == expected
 
+    if status_code != 200 and status_code is not None:
+        captured = capsys.readouterr()
+        assert f"Ошибка API: статус {status_code}" in captured.out
+    elif exception == requests.exceptions.RequestException:
+        captured = capsys.readouterr()
+        assert "Ошибка при запросе к API hh.ru" in captured.out
+    elif exception in (json.JSONDecodeError, KeyError):
+        captured = capsys.readouterr()
+        assert "Ошибка обработки ответа API" in captured.out
 
-# Тест установки ключевого слова
+
 def test_keyword_setting(hh_api):
     """Проверка установки ключевого слова"""
     hh_api.get_vacancies("python")

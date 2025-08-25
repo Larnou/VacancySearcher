@@ -1,6 +1,7 @@
 import json
+
 from pathlib import Path
-from typing import Any
+from typing import Any, Callable
 
 from src.classes.repository import Repository
 from src.classes.vacancy import Vacancy
@@ -11,6 +12,8 @@ class VacancyManager(Repository):
     Класс VacancyManager, позволяет хранить, создавать, удалять и возвращать список вакансий типа Vacancy.
     Хранение реализовано через словарь с ключом по url вакансии.
     """
+
+    vacancies: dict
 
     def __init__(self) -> None:
         """
@@ -25,7 +28,6 @@ class VacancyManager(Repository):
         Args:
             vacancy: Вакансия, которая будет добавлена к списку менеджера.
         """
-        print(vacancy)
         url = vacancy.alternate_url
         if url not in self.vacancies:
             self.vacancies[url] = vacancy
@@ -39,10 +41,11 @@ class VacancyManager(Repository):
         Args:
             list_of_vacancies: Набор вакансий, которая будет добавлена к списку менеджера.
         """
+
         for vacancy in list_of_vacancies:
             self.add_vacancy(vacancy)
 
-    def get_vacancies(self, print_vacancies: bool = False):
+    def get_vacancies(self, print_vacancies: bool = False) -> Callable:
         """
         Возвращает список вакансий, добавленных в менеджер.
 
@@ -57,7 +60,7 @@ class VacancyManager(Repository):
                 print("\n")
         return self.vacancies.values()
 
-    def delete_vacancy(self, vacancy: Vacancy):
+    def delete_vacancy(self, vacancy: Vacancy) -> bool:
         """
         Удаляет выбранную вакансию из списка менеджера.
 
@@ -74,7 +77,7 @@ class VacancyManager(Repository):
             return False
 
     @staticmethod
-    def save_to_json(vacancies_list: list[Vacancy], filename: str, home_directiry: str = None) -> None:
+    def save_to_json(vacancies_list: list[Vacancy], filename: str, home_directiry: str | None = None) -> None:
         """
         Сохранение списка вакансий в json-файл.
         Args:

@@ -66,9 +66,11 @@ def vacancy_no_salary(sample_rates_dict):
         rates_dict=sample_rates_dict,
     )
 
+
 @pytest.fixture
 def vacancy_manager():
     return VacancyManager()
+
 
 @pytest.fixture
 def mock_vacancy():
@@ -87,9 +89,10 @@ def mock_vacancy():
         "experience": "1-3 years",
         "requirement": "Python, Django, Flask",
         "employer": "TechCorp",
-        "alternate_url": "https://example.com/vacancy/1"
+        "alternate_url": "https://example.com/vacancy/1",
     }
     return vacancy
+
 
 @pytest.fixture
 def mock_vacancy2():
@@ -108,7 +111,7 @@ def mock_vacancy2():
         "experience": "3+ years",
         "requirement": "Python, Machine Learning",
         "employer": "DataPro",
-        "alternate_url": "https://example.com/vacancy/2"
+        "alternate_url": "https://example.com/vacancy/2",
     }
     return vacancy
 
@@ -119,13 +122,14 @@ def mock_manager():
     manager = Mock(spec=VacancyManager)
     return manager
 
+
 @pytest.fixture
 def mock_vacancies():
     """Создает список мок-объектов вакансий"""
     vacancies = []
     for i in range(3):
         vacancy = Mock(spec=Vacancy)
-        vacancy.__str__ = Mock(return_value=f"Вакансия {i+1}")
+        vacancy.__str__ = Mock(return_value=f"Вакансия {i + 1}")
         vacancies.append(vacancy)
     return vacancies
 

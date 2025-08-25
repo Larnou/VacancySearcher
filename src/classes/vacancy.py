@@ -105,8 +105,8 @@ class Vacancy:
     def calculate_avg_salary(self) -> float | None | Any:
         """Рассчитывает среднюю зарплату для сравнений"""
 
-        salary_from = self.salary.get("from")
-        salary_to = self.salary.get("to")
+        salary_from = float(self.salary.get("from"))
+        salary_to = float(self.salary.get("to"))
 
         if salary_from != 0 and salary_to != 0:
             return (salary_from + salary_to) / 2
@@ -126,8 +126,8 @@ class Vacancy:
             Форматированная информация о зарплате.
         """
 
-        salary_from = self.salary.get("from")
-        salary_to = self.salary.get("to")
+        salary_from = float(self.salary.get("from"))
+        salary_to = float(self.salary.get("to"))
 
         if salary_from + salary_to == 0:
             return "Не указана"
@@ -168,34 +168,60 @@ class Vacancy:
 
     # Методы сравнения по средней зарплате
     # Если зп в разных валютах, надо перевести к рублям и сравнить
-    def __eq__(self, other) -> bool:
+    def __eq__(self, other: Any) -> bool:
         if not isinstance(other, Vacancy):
             raise TypeError("Можно сравнивать только объекты Vacancy!")
 
         if self.avg_salary == 0 or other.avg_salary == 0:
             raise TypeError("Эти вакансии нельзя сравнить, так как у одной из них не указана зарабоная плата.")
-        return self.avg_salary == other.avg_salary
 
-    def __lt__(self, other) -> bool:
+        if self.avg_salary is None and other.avg_salary is None:
+            return False
+        elif self.avg_salary is None:
+            return True
+        elif other.avg_salary is None:
+            return False
+        else:
+            return self.avg_salary == other.avg_salary
+
+
+
+    def __lt__(self, other: Any) -> bool:
         if not isinstance(other, Vacancy):
             raise TypeError("Можно сравнивать только объекты Vacancy!")
 
         if self.avg_salary == 0 or other.avg_salary == 0:
             raise TypeError("Эти вакансии нельзя сравнить, так как у одной из них не указана зарабоная плата.")
-        return self.avg_salary < other.avg_salary
 
-    def __le__(self, other) -> bool:
+        if self.avg_salary is None and other.avg_salary is None:
+            return False
+        elif self.avg_salary is None:
+            return True
+        elif other.avg_salary is None:
+            return False
+        else:
+            return self.avg_salary < other.avg_salary
+
+    def __le__(self, other: Any) -> bool:
         return self.__lt__(other) or self.__eq__(other)
 
-    def __gt__(self, other) -> bool:
+    def __gt__(self, other: Any) -> bool:
         if not isinstance(other, Vacancy):
             raise TypeError("Можно сравнивать только объекты Vacancy!")
 
         if self.avg_salary == 0 or other.avg_salary == 0:
             raise TypeError("Эти вакансии нельзя сравнить, так как у одной из них не указана зарабоная плата.")
-        return self.avg_salary > other.avg_salary
 
-    def __ge__(self, other) -> bool:
+        if self.avg_salary is None and other.avg_salary is None:
+            return False
+        elif self.avg_salary is None:
+            return True
+        elif other.avg_salary is None:
+            return False
+        else:
+            return self.avg_salary > other.avg_salary
+
+    def __ge__(self, other: Any) -> bool:
         return self.__gt__(other) or self.__eq__(other)
 
     @staticmethod

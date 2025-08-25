@@ -10,7 +10,7 @@ class Repository(ABC):
     """
 
     @abstractmethod
-    def add_vacancy(self, vacancy: Vacancy):
+    def add_vacancy(self, vacancy: Vacancy) -> None:
         """
         Добавление вакансии к списку вакансий менеджера.
 
@@ -20,7 +20,7 @@ class Repository(ABC):
         pass
 
     @abstractmethod
-    def delete_vacancy(self, vacancy: Vacancy):
+    def delete_vacancy(self, vacancy: Vacancy) -> None:
         """
         Удаляет выбранную вакансию из списка менеджера.
 
@@ -33,7 +33,7 @@ class Repository(ABC):
 
     @staticmethod
     @abstractmethod
-    def save_to_json(vacancies_list: list[Vacancy], filename: str, home_directiry: str = None):
+    def save_to_json(vacancies_list: list[Vacancy], filename: str, home_directiry: str = None) -> None:
         """
         Сохранение списка вакансий в json-файл.
         Args:

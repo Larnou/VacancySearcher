@@ -1,4 +1,5 @@
 import json
+from typing import Any
 
 import requests
 
@@ -13,10 +14,10 @@ class RatesAPI:
 
     __API_URL = "https://www.cbr-xml-daily.ru/daily_json.js"
 
-    def __init__(self):
+    def __init__(self) -> None:
         pass
 
-    def get_rates_by_api(self) -> dict:
+    def get_rates_by_api(self) -> Any | dict[Any, Any]:
         """
         Получает список курсов валют через подключение к ЦБРФ Api.
 
@@ -43,7 +44,7 @@ class RatesAPI:
             return {}
 
     @staticmethod
-    def get_currency_rate(curency_code, rate_dict) -> float:
+    def get_currency_rate(curency_code: str, rate_dict: dict[str, str]) -> Any | float:
         """
         Получение текущего курса валюты, указанной в curency_code в пересчёте 1 единица валюты == N рублей
 
@@ -54,6 +55,6 @@ class RatesAPI:
             Текущий курс валюты, указанный в curency_code в пересчёте N рублей на 1 единицу валюты
         """
         currency = rate_dict[curency_code]
-        currency_value = currency["Value"]
-        currency_nominal = currency["Nominal"]
+        currency_value = float(currency.get("Value"))
+        currency_nominal = float(currency.get("Nominal"))
         return currency_value / currency_nominal

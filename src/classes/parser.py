@@ -1,5 +1,7 @@
 from abc import ABC, abstractmethod
 
+import requests
+
 
 class Parser(ABC):
     """
@@ -7,23 +9,11 @@ class Parser(ABC):
     """
 
     @abstractmethod
-    def get_vacancies_by_api(self) -> list[dict]:
+    def connect_to_api(self) -> requests.Response:
         """
-        Получает список вакансий через подключение к HH Api.
+        Подключение к HH Api.
 
         Returns:
-            Список вакансий
-        """
-        pass
-
-    @abstractmethod
-    def get_vacancies(self, keyword) -> list[dict]:
-        """
-        Получение вакансий по заданному ключевому слову keyword.
-
-        Args:
-            keyword: Ключевое слово, по которому будет проводиться поиск вакансий.
-        Returns:
-            Список вакансий, содержащих ключевое слово.
+            Response подключения API.
         """
         pass
