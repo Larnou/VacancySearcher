@@ -13,7 +13,9 @@ dependencies = [
     "python-dotenv (>=1.1.0,<2.0.0)",
     "requests (>=2.32.3,<3.0.0)",
     "openpyxl (>=3.1.5,<4.0.0)",
-    "pandas (>=2.3.0,<3.0.0)"
+    "pandas (>=2.3.0,<3.0.0)",
+    "cbrf (==1.0.0)",
+    "pytest-mock (>=3.14.1,<4.0.0)"
 ]
 
 
@@ -24,6 +26,7 @@ build-backend = "poetry.core.masonry.api"
 [tool.poetry.group.dev.dependencies]
 pytest = "^8.4.1"
 pytest-cov = "^6.2.1"
+types-requests = "^2.32.4.20250809"
 
 
 [tool.poetry.group.lint.dependencies]
@@ -38,6 +41,7 @@ no_implicit_optional = true
 warn_return_any = true
 exclude = 'venv'
 explicit_package_bases = true
+implicit_optional = true
 
 [tool.black]
 # Максимальная длина строки
